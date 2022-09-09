@@ -7,7 +7,7 @@ uniform vec2 lightPosition;
 uniform float lightSize;
 
 
-float terrain1(vec2 samplePoint)
+float terrain(vec2 samplePoint)
 {
     //Channel 0 because we want walls/terrain that cast shadows to be in channel 0, then things hidden in shadows in channel 1.
     float samplePointAlpha = texture(iChannel0, samplePoint).a;
@@ -16,7 +16,7 @@ float terrain1(vec2 samplePoint)
     
     // Soften the shadows. Comment out for hard shadows.
     // The closer the first number is to 1.0, the softer the shadows. 
-    returnValue = mix(0.98, 1.0, returnValue);
+     returnValue = mix(0.98, 1.0, returnValue);
     return returnValue;
 }
 
@@ -29,7 +29,6 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     // Normalize the fragment coordinate from (0.0, 0.0) to (1.0, 1.0)
     vec2 normalizedFragCoord = fragCoord/iResolution.xy;
     vec2 normalizedLightCoord = lightPosition.xy/iResolution.xy;
-    //vec2 normalizedLightCoord2 = lightPosition2.xy/iResolution.xy;
 
     // Start our mixing variable at 1.0
     float lightAmount = 1.0;
@@ -41,17 +40,15 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         // Grab a coordinate between where we are and the light
         vec2 samplePoint = mix(normalizedFragCoord, normalizedLightCoord, t);
         // Is there something there? If so, we'll assume we are in shadow
-            float shadowAmount = terrain1(samplePoint);
+            float shadowAmount = terrain(samplePoint);
         // Multiply the light amount
         //(Multiply in case we want to upgrade to soft shadows)
         lightAmount *= shadowAmount;
-        //lightAmount2 *= shadowAmount;
 
     }
 
     // Find out how much light we have based on the distance to our light
     lightAmount *= 1.0 - smoothstep(0.0, lightSize, distanceToLight);
-    //lightAmount2 *= 1.0 - smoothstep(0.0, lightSize2, distanceToLight);
 
 
     // We'll alternate our display between black and whatever is in channel 1

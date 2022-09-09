@@ -41,6 +41,8 @@ class LightEnv(arcade.Window):
 #         pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 #         self.img = Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
 
+        self.time_before_update = 0
+        self.time_after_update = 0
 
         arcade.Window.headless = True
 
@@ -267,8 +269,16 @@ class LightEnv(arcade.Window):
     def on_update(self, delta_time: float):
         """ Movement and game logic """
         self.score_before_update = self.score
+        
+#         self.time_before_update = self.time_taken_reported() #test
+        
         self.time_taken += delta_time
 
+#         self.time_after_update = self.time_taken_reported() #test
+        
+#         if self.time_after_update - self.time_before_update == 1:
+# #             print("-1 time penalty to score")
+#             self.score -= 1 
         # Call update on all sprites
         
         # Keep the player on screen -TF add from https://realpython.com/arcade-python-game-framework/#drawing-on-the-window
@@ -306,9 +316,9 @@ class LightEnv(arcade.Window):
             #Minus 1 to score
             self.score -= 1
             
-            #Showing image for wrapper testing
-            x = arcade.get_image()
-            x.show()
+#             #Showing image for wrapper testing
+#             x = arcade.get_image()
+#             x.show()
 
         #If reward is hit, then remove it and +100 score.
         for reward in reward_hit_list:
