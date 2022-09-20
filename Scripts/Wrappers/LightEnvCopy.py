@@ -23,7 +23,7 @@ SPRITE_SCALING = 0.25
 CAMERA_SPEED = 0.1
 
 PLAYER_MOVEMENT_SPEED = 7
-BOMB_COUNT = 50
+BOMB_COUNT = 25
 TORCH_COUNT = 1
 PLAYING_FIELD_WIDTH = 800 #1600
 PLAYING_FIELD_HEIGHT = 600 #1600
@@ -270,15 +270,15 @@ class LightEnv(arcade.Window):
         """ Movement and game logic """
         self.score_before_update = self.score
         
-#         self.time_before_update = self.time_taken_reported() #test
+        self.time_before_update = self.time_taken_reported() #test
         
         self.time_taken += delta_time
 
-#         self.time_after_update = self.time_taken_reported() #test
+        self.time_after_update = self.time_taken_reported() #test
         
-#         if self.time_after_update - self.time_before_update == 1:
-# #             print("-1 time penalty to score")
-#             self.score -= 1 
+        if self.time_after_update - self.time_before_update == 1:
+#             print("-1 time penalty to score")
+            self.score -= 1 
         # Call update on all sprites
         
         # Keep the player on screen -TF add from https://realpython.com/arcade-python-game-framework/#drawing-on-the-window
@@ -427,7 +427,7 @@ class LightEnv(arcade.Window):
 #         print("step in game reward: ", reward)
         obs = arcade.get_image()
         
-        return obs, reward, self.done
+        return obs, reward, self.done, self.torch_collected
     
     def stop_movement(self, action):
         print("stopping movement")
