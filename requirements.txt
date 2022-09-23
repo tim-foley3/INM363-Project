@@ -4,7 +4,6 @@ atari-py==0.2.9
 gym==0.23.1
 lz4==4.0.2
 matplotlib==3.5.3
-numpy==1.23.2
 pandas==1.4.4
 Pegl==0.2a1
 Pillow==9.0.1
@@ -13,4 +12,5 @@ pyglet==2.0a2
 pymunk==6.2.1
 ray==2.0.0
 tensorflow==2.10.0
+tensorflow_probability==0.18.0
 torch==1.12.1
