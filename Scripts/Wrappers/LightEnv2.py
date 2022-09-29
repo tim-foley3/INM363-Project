@@ -31,6 +31,10 @@ REWARD_COUNT = 1 #TF - Add in reward
 END_GAME = False
 torch_collected = False
 
+LIGHT_SIZE_BEFORE_COLLECTION = 50 # hyperparameters for light size before and after torch collection
+LIGHT_SIZE_AFTER_COLLECTION = 500 # hyperparameters for light size before and after torch collection
+LIGHTSTRENGTH = 0.98 #value for strength of shadows between 0,1. Closer to 1, softer the shadow.
+
 fps= 1000
 
 
@@ -39,10 +43,6 @@ class LightEnv2(arcade.Window):
     def __init__(self, width, height, title):
         super().__init__(width, height, title)
         
-        
-#         pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-#         self.img = Surface((SCREEN_WIDTH, SCREEN_HEIGHT))
-
         self.time_before_update = 0
         self.time_after_update = 0
 
@@ -99,7 +99,7 @@ class LightEnv2(arcade.Window):
 
     def load_shader(self):
         # Where is the shader file? Must be specified as a path.
-        shader_file_path = Path("added_light_source-Copy.glsl")
+        shader_file_path = Path("raycasting_shader_game2.glsl")
 
         # Size of the window
         window_size = self.get_size()
@@ -250,15 +250,14 @@ class LightEnv2(arcade.Window):
         # Run the shader and render to the window
         if self.torch_collected == False:
             self.shadertoy.program['lightPosition'] = self.torch.position #TF add
-            self.shadertoy.program['lightSize'] = 50
-#             self.shadertoy.program['lightPosition'] = self.player_sprite.position
-#             self.shadertoy.program['lightSize'] = 150
+            self.shadertoy.program['lightSize'] = LIGHT_SIZE_BEFORE_COLLECTION
+            self.shadertoy.program['lightStrength'] = LIGHTSTRENGTH
             self.shadertoy.render()
+
         elif self.torch_collected == True:
             self.shadertoy.program['lightPosition'] = self.player_sprite.position #TF add
-            self.shadertoy.program['lightSize'] = 500
-#             self.shadertoy.program['lightPosition2'] = self.player_sprite.position
-#             self.shadertoy.program['lightSize2'] = 500
+            self.shadertoy.program['lightSize'] = LIGHT_SIZE_AFTER_COLLECTION
+            self.shadertoy.program['lightStrength'] = LIGHTSTRENGTH
             self.shadertoy.render()            
 
         # Draw the walls after light has been calculated
@@ -324,7 +323,7 @@ class LightEnv2(arcade.Window):
             self.score -= 1 
         # Call update on all sprites
         
-        # Keep the player on screen -TF add from https://realpython.com/arcade-python-game-framework/#drawing-on-the-window
+        # Keep the player on screen 
         if self.player_sprite.top > self.height:
             self.player_sprite.top = self.height
         if self.player_sprite.right > self.width:
@@ -365,10 +364,6 @@ class LightEnv2(arcade.Window):
             #Minus 1 to score
             self.score -= 1
             
-#             #Showing image for wrapper testing
-#             x = arcade.get_image()
-#             x.show()
-
         #If reward is hit, then remove it and +100 score.
         for reward in reward_hit_list:
             if self.switch2_activated == True and self.torch_collected==True:
@@ -403,7 +398,6 @@ class LightEnv2(arcade.Window):
                 self.scene.remove_sprite_list_by_object(self.scene["Reward"])
                 self.scene.add_sprite("Reward", self.reward) # add reward back in to scene 
             
-            #Play a sound
             self.physics_engine.update()
             
         for switch in switch2_hit_list: #Green
@@ -413,8 +407,7 @@ class LightEnv2(arcade.Window):
             if self.switch1_activated_count > 0:
                 self.reward_list = arcade.SpriteList() 
                 self.reward_list.append(self.reward) #add the reward back into the reward list
-            #Play a sound
-#             self.on_draw()
+                
             self.physics_engine.update()
 
                         
@@ -422,12 +415,9 @@ class LightEnv2(arcade.Window):
         if bomb_hit_list != []:     
             self.player_sprite.center_x = 256 #Might need to paramaterise this to be screen size
             self.player_sprite.center_y = 512 #As resizing window to 80x60 could ruin this
-            #Should be ok not to parameterise actually as game calulcated as normal then passed and
-            #converted to 80x60 in the wrapper, so it's all scaled.
 #         TF - End Testing
      
         self.score_after_update = self.score
-#         print("self.score after update: ", self.score_after_update)
 
         
     def reset(self):
@@ -522,7 +512,7 @@ class LightEnv2(arcade.Window):
             self.score -= 1 
         # Call update on all sprites
         
-        # Keep the player on screen -TF add from https://realpython.com/arcade-python-game-framework/#drawing-on-the-window
+        # Keep the player on screen 
         if self.player_sprite.top > self.height:
             self.player_sprite.top = self.height
         if self.player_sprite.right > self.width:
@@ -563,10 +553,6 @@ class LightEnv2(arcade.Window):
             #Minus 1 to score
             self.score -= 1
             
-#             #Showing image for wrapper testing
-#             x = arcade.get_image()
-#             x.show()
-
         #If reward is hit, then remove it and +100 score.
         for reward in reward_hit_list:
             if self.switch2_activated == True and self.torch_collected == True:
@@ -611,8 +597,6 @@ class LightEnv2(arcade.Window):
             if self.switch1_activated_count > 0:
                 self.reward_list = arcade.SpriteList() 
                 self.reward_list.append(self.reward) #add the reward back into the reward list
-            #Play a sound
-#             self.on_draw()
             self.physics_engine.update()
 
                         
@@ -620,12 +604,9 @@ class LightEnv2(arcade.Window):
         if bomb_hit_list != []:     
             self.player_sprite.center_x = 256 #Might need to paramaterise this to be screen size
             self.player_sprite.center_y = 512 #As resizing window to 80x60 could ruin this
-            #Should be ok not to parameterise actually as game calulcated as normal then passed and
-            #converted to 80x60 in the wrapper, so it's all scaled.
 #         TF - End Testing
      
         self.score_after_update = self.score
-#         print("self.score after update: ", self.score_after_update)
         
         
         # Calculate the reward for the particular action (0, -1 or +100).
