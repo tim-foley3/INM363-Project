@@ -95,7 +95,7 @@ class LightEnv2(arcade.Window):
         # Individual light we move with player, and turn on/off
         self.player_light = None
         LightEnv2.center_window(self) #Display game window in center of pc screen
-
+        self.clock = pygame.time.Clock()
 
     def load_shader(self):
         # Where is the shader file? Must be specified as a path.
